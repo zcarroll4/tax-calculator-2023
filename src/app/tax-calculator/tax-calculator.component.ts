@@ -35,7 +35,9 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   updateTaxableIncome() {
-    this.taxable_income = this.gross_income - this.standard_deduction;
+    if (this.gross_income > this.standard_deduction) {
+      this.taxable_income = this.gross_income - this.standard_deduction;
+    }
   }
 
   calculateTaxes() {

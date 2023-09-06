@@ -1,23 +1,24 @@
-<div class="container my-3 border shadow">
-  <div class="row border">
+<div class="col-10 offset-1 col-md-6 offset-md-3">
+<div class="container my-3 pt-3 border shadow">
+  <div class="row border-bottom">
     <div class="col-12 text-center p-2">
       <h1>Tax Estimator Calculator</h1>
     </div>
   </div>
-  <div class="row border">
+  <div class="row py-3">
     <div class="col-12 text-center p-2">
       <p>Enter your Gross Income & any expected Deductions you plan to take below.</p>
       <div class="row my-2">
         <div class="col-8">
-          <h2>Gross Income</h2>
+          <h3>Gross Income</h3>
         </div>
-        <div class="col"><input type="number" (change)="updateTaxableIncome()" step="1000"
+        <div class="col"><input type="number" (keyup)="updateTaxableIncome()" step="1000"
             class="text-center form-control" [(ngModel)]="gross_income" />
         </div>
       </div>
       <div class="row my-2">
         <div class="col-8">
-          <h2>Filing Status</h2>
+          <h3>Filing Status</h3>
         </div>
         <div class="col">
           <select class="form-select text-center" (change)="updateStandardDeduction()" [(ngModel)]="filing_status">
@@ -29,7 +30,7 @@
       </div>
       <div class="row my-2">
         <div class="col-8">
-          <h2>Standard Deduction</h2>
+          <h3>Standard Deduction</h3>
         </div>
         <div class="col">
           <label class="form-control">{{standard_deduction}}</label>
@@ -37,18 +38,18 @@
       </div>
       <div class="row my-2">
         <div class="col-8">
-          <h2>Taxable Income</h2>
+          <h3>Taxable Income</h3>
         </div>
         <div class="col">
           <label class="form-control">{{taxable_income}}</label>
         </div>
       </div>
-      <div class="row border-top my-2" *ngIf="!taxesCalculated">
+      <div class="row border-top mt-2" *ngIf="!taxesCalculated">
         <div class="col-10 m-auto py-3">
           <button (click)="calculateTaxes()" class="btn w-100 btn-success p-2 fs-3">Calculate Taxes</button>
         </div>
       </div>
-      <div class="row border-top my-2" *ngIf="taxesCalculated">
+      <div class="row border-top mt-2" *ngIf="taxesCalculated">
         <div class="col-10 m-auto py-3">
           <div class="w-100">
             <div class="row py-3">
@@ -65,5 +66,5 @@
       </div>
     </div>
   </div>
-
+</div>
 </div>
