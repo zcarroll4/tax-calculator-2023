@@ -12,7 +12,7 @@
         <div class="col-8">
           <h3>Gross Income</h3>
         </div>
-        <div class="col"><input type="tel" (keyup)="updateTaxableIncome()" step="1000"
+        <div class="col"><input type="tel" [disabled]="taxesCalculated" (keyup)="updateTaxableIncome()" step="1000"
             class="text-center form-control" [(ngModel)]="gross_income" />
         </div>
       </div>
@@ -21,7 +21,7 @@
           <h3>Filing Status</h3>
         </div>
         <div class="col">
-          <select class="form-select text-center" (change)="updateStandardDeduction()" [(ngModel)]="filing_status">
+          <select class="form-select text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()" [(ngModel)]="filing_status">
             <option>Single</option>
             <option>Married Filing Jointly</option>
             <option>Married Filing Separately</option>
