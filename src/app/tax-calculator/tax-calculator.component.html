@@ -1,70 +1,104 @@
 <div class="col-12 offset-0 col-md-6 offset-md-3">
-<div class="container my-3 pt-3 border shadow">
-  <div class="row border-bottom">
-    <div class="col-12 text-center p-2">
-      <h1>Tax Estimator Calculator</h1>
+  <div class="container my-3 pt-3 border shadow">
+    <div class="row border-bottom">
+      <div class="col-12 text-center p-2">
+        <h1>Tax Estimator Calculator</h1>
+      </div>
     </div>
-  </div>
-  <div class="row py-1">
-    <div class="col-12 text-center p-2">
-      <!-- <p>Enter your Gross Income & any expected Deductions you plan to take below.</p> -->
-      <div class="row my-1">
-        <div class="col-8">
-          <h3>Gross Income</h3>
+    <div class="row py-1">
+      <div class="col-12 text-center p-2">
+        <!-- <p>Enter your Gross Income & any expected Deductions you plan to take below.</p> -->
+        <div class="row my-1">
+          <div class="col-8">
+            <h3>Gross Income</h3>
+          </div>
+          <div class="col"><input type="tel" [disabled]="taxesCalculated" (keyup)="updateTaxableIncome()" step="1000"
+              class="text-center form-control" [(ngModel)]="gross_income" />
+          </div>
         </div>
-        <div class="col"><input type="tel" [disabled]="taxesCalculated" (keyup)="updateTaxableIncome()" step="1000"
-            class="text-center form-control" [(ngModel)]="gross_income" />
+        <div class="row my-2">
+          <div class="col-8">
+            <h3>Filing Status</h3>
+          </div>
+          <div class="col">
+            <select class="form-select text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()"
+              [(ngModel)]="filing_status">
+              <option>Single</option>
+              <option>Married Filing Jointly</option>
+              <option>Married Filing Separately</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="row my-2">
-        <div class="col-8">
-          <h3>Filing Status</h3>
+        <div class="row my-4">
+          <div class="col-12">
+          </div>
+          <div class="col border-top">
+            
+          </div>
         </div>
-        <div class="col">
-          <select class="form-select text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()" [(ngModel)]="filing_status">
-            <option>Single</option>
-            <option>Married Filing Jointly</option>
-            <option>Married Filing Separately</option>
-          </select>
+        <div class="row my-2">
+          <div class="col-8">
+            <h3>Standard Deduction</h3>
+          </div>
+          <div class="col">
+            <label class="form-control bg-secondary text-white">{{standard_deduction}}</label>
+          </div>
         </div>
-      </div>
-      <div class="row my-2">
-        <div class="col-8">
-          <h3>Standard Deduction</h3>
+        <div class="row my-2">
+          <div class="col-8">
+            <h3>State Standard Deduction (WV)</h3>
+          </div>
+          <div class="col">
+            <label class="form-control bg-secondary text-white">2000</label>
+          </div>
         </div>
-        <div class="col">
-          <label class="form-control">{{standard_deduction}}</label>
+        <div class="row my-2">
+          <div class="col-8">
+            <h3>Federal Taxable Income</h3>
+          </div>
+          <div class="col">
+            <label class="form-control bg-secondary text-white">{{taxable_income}}</label>
+          </div>
         </div>
-      </div>
-      <div class="row my-2">
-        <div class="col-8">
-          <h3>Taxable Income</h3>
+        <div class="row my-2">
+          <div class="col-8">
+            <h3>State Taxable Income</h3>
+          </div>
+          <div class="col">
+            <label class="form-control bg-secondary text-white">{{state_taxable_income}}</label>
+          </div>
         </div>
-        <div class="col">
-          <label class="form-control">{{taxable_income}}</label>
+        <div class="row border-top mt-2" *ngIf="!taxesCalculated">
+          <div class="col-10 m-auto py-3">
+            <button (click)="calculateTaxes()" class="btn w-100 btn-success p-2 fs-3">Calculate Taxes</button>
+          </div>
         </div>
-      </div>
-      <div class="row border-top mt-2" *ngIf="!taxesCalculated">
-        <div class="col-10 m-auto py-3">
-          <button (click)="calculateTaxes()" class="btn w-100 btn-success p-2 fs-3">Calculate Taxes</button>
-        </div>
-      </div>
-      <div class="row border-top mt-2" *ngIf="taxesCalculated">
-        <div class="col-10 m-auto py-3">
-          <div class="w-100">
-            <div class="row py-3">
-              <div class="col">
-                <h2>Estimated Taxes: </h2>
-              </div>
-              <div class="col">
-                <h2>{{ estimated_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+        <div class="row border-top mt-2" *ngIf="taxesCalculated">
+          <div class="col-10 m-auto py-3">
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Estimated Federal Taxes: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
               </div>
             </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Estimated State Taxes: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_state_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <button (click)="resetData()" class="btn w-100 btn-danger p-2 fs-4">Reset</button>
           </div>
-          <button (click)="resetData()" class="btn w-100 btn-danger p-2 fs-4">Reset</button>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
