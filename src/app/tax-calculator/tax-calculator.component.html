@@ -75,10 +75,11 @@
         </div>
         <div class="row border-top mt-2" *ngIf="taxesCalculated">
           <div class="col-10 m-auto py-3">
+            <h2 class="text-start text-decoration-underline">Estimates:</h2>
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Estimated Federal Taxes: </h2>
+                  <h2>Federal Taxes: </h2>
                 </div>
                 <div class="col">
                   <h2>{{ estimated_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
@@ -88,10 +89,61 @@
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Estimated State Taxes: </h2>
+                  <h2>State Taxes: </h2>
                 </div>
                 <div class="col">
                   <h2>{{ estimated_state_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Social Security Taxes: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_social_security_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Medicare Taxes: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_medicare_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Employer FICA Contrubtions: </h2>
+                </div>
+                <div class="col">
+                  <h2>-{{ estimated_employer_fica_contribution | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <hr/>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Total Taxes: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_total_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h2>Net Income: </h2>
+                </div>
+                <div class="col">
+                  <h2>{{ estimated_net_income | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
                 </div>
               </div>
             </div>

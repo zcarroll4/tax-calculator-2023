@@ -15,6 +15,11 @@ export class TaxCalculatorComponent implements OnInit {
   estimated_taxes: number | undefined;
   estimated_state_taxes: number | undefined;
   taxesCalculated: boolean = false;
+  estimated_social_security_taxes : number | undefined;
+  estimated_medicare_taxes : number | undefined;
+  estimated_employer_fica_contribution : number | undefined;
+  estimated_total_taxes : number | undefined;
+  estimated_net_income : number | undefined;
 
   constructor() { }
 
@@ -46,24 +51,29 @@ export class TaxCalculatorComponent implements OnInit {
   calculateTaxes() {
     this.taxesCalculated = true;
     this.calculateStateTaxes();
+    this.calculateFica();
     if (this.taxable_income > 11000) {
       this.estimated_taxes = 1100;
       if (this.taxable_income > 44725) {
         this.estimated_taxes += 4047;
       } else {
         this.estimated_taxes += Math.round((this.taxable_income - 11000) * .12);
+        this.calculateTotalTaxes();
         return;
       }
       if (this.taxable_income > 95375) {
         this.estimated_taxes += 11143;
       } else {
         this.estimated_taxes += Math.round((this.taxable_income - 44725) * .22);
+        this.calculateTotalTaxes();
         return;
       }
     } else {
       this.estimated_taxes = Math.round(this.taxable_income * .10);
+      this.calculateTotalTaxes();
       return;
     }
+    this.calculateTotalTaxes();
   }
 
   calculateStateTaxes(){
@@ -94,6 +104,17 @@ export class TaxCalculatorComponent implements OnInit {
     }
   }
 
+  calculateFica(){
+    this.estimated_social_security_taxes = this.taxable_income * .124;
+    this.estimated_medicare_taxes = this.taxable_income * .029;
+    this.estimated_employer_fica_contribution = this.estimated_social_security_taxes * .5;
+    this.estimated_employer_fica_contribution += this.estimated_medicare_taxes * .5;
+  }
+
+  calculateTotalTaxes(){
+    this.estimated_total_taxes = (this.estimated_state_taxes ?? 0) + (this.estimated_social_security_taxes ?? 0) + (this.estimated_medicare_taxes ?? 0) + (this.estimated_taxes ?? 0) - (this.estimated_employer_fica_contribution ?? 0);
+    this.estimated_net_income = this.gross_income - this.estimated_total_taxes;
+  }
   resetData() {
     this.estimated_taxes = undefined;
     this.taxesCalculated = false;
