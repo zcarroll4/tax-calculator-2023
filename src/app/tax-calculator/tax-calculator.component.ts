@@ -105,8 +105,8 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   calculateFica(){
-    this.estimated_social_security_taxes = this.taxable_income * .124;
-    this.estimated_medicare_taxes = this.taxable_income * .029;
+    this.estimated_social_security_taxes = this.gross_income * .124;
+    this.estimated_medicare_taxes = this.gross_income * .029;
     this.estimated_employer_fica_contribution = this.estimated_social_security_taxes * .5;
     this.estimated_employer_fica_contribution += this.estimated_medicare_taxes * .5;
   }
