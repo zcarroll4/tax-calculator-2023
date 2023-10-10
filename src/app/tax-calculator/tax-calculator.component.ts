@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { resourceUsage } from 'process';
 
 @Component({
   selector: 'app-tax-calculator',
@@ -7,11 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TaxCalculatorComponent implements OnInit {
 
-  filing_status = 'Single';
-  standard_deduction = 13850;
-  gross_income = 90000;
-  taxable_income = this.gross_income - this.standard_deduction;
-  state_taxable_income = this.gross_income - 2000;
+  filing_status : string | undefined;
+  standard_deduction : number | undefined;
+  gross_income : number | undefined;
+  taxable_income  : number | undefined;
+  state_taxable_income : number | undefined;
   estimated_taxes: number | undefined;
   estimated_state_taxes: number | undefined;
   taxesCalculated: boolean = false;
@@ -42,13 +43,14 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   updateTaxableIncome() {
-    if (this.gross_income > this.standard_deduction) {
-      this.taxable_income = this.gross_income - this.standard_deduction;
-      this.state_taxable_income = this.gross_income - 2000;
+    if ((this.gross_income && this.standard_deduction) && this.gross_income > this.standard_deduction) {
+        this.taxable_income = this.gross_income - this.standard_deduction;
+        this.state_taxable_income = this.gross_income - 2000;
     }
   }
 
   calculateTaxes() {
+    if(!this.taxable_income) return;
     this.taxesCalculated = true;
     this.calculateStateTaxes();
     this.calculateFica();
@@ -77,6 +79,7 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   calculateStateTaxes(){
+    if(!this.state_taxable_income) return;
     if (this.state_taxable_income > 5000) {
       this.estimated_state_taxes = 118;
       if (this.state_taxable_income > 12500) {
@@ -105,13 +108,17 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   calculateFica(){
-    this.estimated_social_security_taxes = this.gross_income * .124;
-    this.estimated_medicare_taxes = this.gross_income * .029;
+    if(!this.gross_income) return;
+    // this.estimated_social_security_taxes = this.gross_income * .124; //self employed
+    this.estimated_social_security_taxes = this.gross_income * .062;
+    // this.estimated_medicare_taxes = this.gross_income * .029; //self employed
+    this.estimated_medicare_taxes = this.gross_income * .0145;
     this.estimated_employer_fica_contribution = this.estimated_social_security_taxes * .5;
     this.estimated_employer_fica_contribution += this.estimated_medicare_taxes * .5;
   }
 
   calculateTotalTaxes(){
+    if(!this.gross_income) return;
     this.estimated_total_taxes = (this.estimated_state_taxes ?? 0) + (this.estimated_social_security_taxes ?? 0) + (this.estimated_medicare_taxes ?? 0) + (this.estimated_taxes ?? 0) - (this.estimated_employer_fica_contribution ?? 0);
     this.estimated_net_income = this.gross_income - this.estimated_total_taxes;
   }

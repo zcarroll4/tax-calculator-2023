@@ -9,19 +9,19 @@
       <div class="col-12 text-center p-2">
         <!-- <p>Enter your Gross Income & any expected Deductions you plan to take below.</p> -->
         <div class="row my-1">
-          <div class="col-8">
+          <div class="col-7">
             <h3>Gross Income</h3>
           </div>
           <div class="col"><input type="tel" [disabled]="taxesCalculated" (keyup)="updateTaxableIncome()" step="1000"
-              class="text-center form-control" [(ngModel)]="gross_income" />
+              class="text-center w-75 m-auto form-control" [(ngModel)]="gross_income" />
           </div>
         </div>
         <div class="row my-2">
-          <div class="col-8">
+          <div class="col-7">
             <h3>Filing Status</h3>
           </div>
           <div class="col">
-            <select class="form-select text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()"
+            <select class="form-select w-75 m-auto text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()"
               [(ngModel)]="filing_status">
               <option>Single</option>
               <option>Married Filing Jointly</option>
@@ -29,43 +29,39 @@
             </select>
           </div>
         </div>
-        <div class="row my-4">
-          <div class="col-12">
+
+        <div class="d-none">
+          <div class="row my-2">
+            <div class="col-8">
+              <h3>Standard Deduction</h3>
+            </div>
+            <div class="col">
+              <label class="form-control bg-secondary text-white">{{standard_deduction}}</label>
+            </div>
           </div>
-          <div class="col border-top">
-            
+          <div class="row my-2">
+            <div class="col-8">
+              <h3>Federal Taxable Income</h3>
+            </div>
+            <div class="col">
+              <label class="form-control bg-secondary text-white">{{taxable_income}}</label>
+            </div>
           </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-8">
-            <h3>Standard Deduction</h3>
+          <div class="row my-2">
+            <div class="col-8">
+              <h3>Standard Deduction (WV)</h3>
+            </div>
+            <div class="col">
+              <label class="form-control bg-secondary text-white">2000</label>
+            </div>
           </div>
-          <div class="col">
-            <label class="form-control bg-secondary text-white">{{standard_deduction}}</label>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-8">
-            <h3>Federal Taxable Income</h3>
-          </div>
-          <div class="col">
-            <label class="form-control bg-secondary text-white">{{taxable_income}}</label>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-8">
-            <h3>Standard Deduction (WV)</h3>
-          </div>
-          <div class="col">
-            <label class="form-control bg-secondary text-white">2000</label>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-8">
-            <h3>State Taxable Income</h3>
-          </div>
-          <div class="col">
-            <label class="form-control bg-secondary text-white">{{state_taxable_income}}</label>
+          <div class="row my-2">
+            <div class="col-8">
+              <h3>State Taxable Income</h3>
+            </div>
+            <div class="col">
+              <label class="form-control bg-secondary text-white">{{state_taxable_income}}</label>
+            </div>
           </div>
         </div>
         <div class="row border-top mt-2" *ngIf="!taxesCalculated">
@@ -79,71 +75,71 @@
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Federal Taxes: </h2>
+                  <h3>Federal Taxes: </h3>
                 </div>
                 <div class="col">
-                  <h2>{{ estimated_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
-                </div>
-              </div>
-            </div>
-            <div class="w-100">
-              <div class="row py-3">
-                <div class="col">
-                  <h2>State Taxes: </h2>
-                </div>
-                <div class="col">
-                  <h2>{{ estimated_state_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                  <h3>{{ estimated_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
                 </div>
               </div>
             </div>
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Social Security Taxes: </h2>
+                  <h3>State Taxes: </h3>
                 </div>
                 <div class="col">
-                  <h2>{{ estimated_social_security_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
-                </div>
-              </div>
-            </div>
-            <div class="w-100">
-              <div class="row py-3">
-                <div class="col">
-                  <h2>Medicare Taxes: </h2>
-                </div>
-                <div class="col">
-                  <h2>{{ estimated_medicare_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                  <h3>{{ estimated_state_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
                 </div>
               </div>
             </div>
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Employer FICA Contrubtions: </h2>
+                  <h3>Social Security Taxes: </h3>
                 </div>
                 <div class="col">
-                  <h2>-{{ estimated_employer_fica_contribution | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
-                </div>
-              </div>
-            </div>
-            <hr/>
-            <div class="w-100">
-              <div class="row py-3">
-                <div class="col">
-                  <h2>Total Taxes: </h2>
-                </div>
-                <div class="col">
-                  <h2>{{ estimated_total_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                  <h3>{{ estimated_social_security_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
                 </div>
               </div>
             </div>
             <div class="w-100">
               <div class="row py-3">
                 <div class="col">
-                  <h2>Net Income: </h2>
+                  <h3>Medicare Taxes: </h3>
                 </div>
                 <div class="col">
-                  <h2>{{ estimated_net_income | currency : 'USD' : 'symbol' : '1.0-0'}}</h2>
+                  <h3>{{ estimated_medicare_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
+                </div>
+              </div>
+            </div>
+            <div class="w-100 d-none">
+              <div class="row py-3">
+                <div class="col">
+                  <h3>Employer FICA Contrubtions: </h3>
+                </div>
+                <div class="col">
+                  <h3>-{{ estimated_employer_fica_contribution | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h3>Total Taxes: </h3>
+                </div>
+                <div class="col">
+                  <h3>{{ estimated_total_taxes | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="row py-3">
+                <div class="col">
+                  <h3>Net Income: </h3>
+                </div>
+                <div class="col">
+                  <h3>{{ estimated_net_income | currency : 'USD' : 'symbol' : '1.0-0'}}</h3>
                 </div>
               </div>
             </div>
