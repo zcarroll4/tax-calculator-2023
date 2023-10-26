@@ -8,23 +8,29 @@ import { resourceUsage } from 'process';
 })
 export class TaxCalculatorComponent implements OnInit {
 
-  filing_status : string | undefined;
-  standard_deduction : number | undefined;
-  gross_income : number | undefined;
-  taxable_income  : number | undefined;
-  state_taxable_income : number | undefined;
+  state: string | undefined;
+  filing_status: string | undefined;
+  standard_deduction: number | undefined;
+  gross_income: number | undefined;
+  self_employment_income: number | undefined;
+  taxable_income: number | undefined;
+  state_taxable_income: number | undefined;
   estimated_taxes: number | undefined;
   estimated_state_taxes: number | undefined;
   taxesCalculated: boolean = false;
-  estimated_social_security_taxes : number | undefined;
-  estimated_medicare_taxes : number | undefined;
-  estimated_employer_fica_contribution : number | undefined;
-  estimated_total_taxes : number | undefined;
-  estimated_net_income : number | undefined;
+  doSelfEmployment: boolean = false;
+  estimated_social_security_taxes: number | undefined;
+  estimated_medicare_taxes: number | undefined;
+  estimated_self_employed_social_security_taxes: number | undefined;
+  estimated_self_employed_medicare_taxes: number | undefined;
+  estimated_employer_fica_contribution: number | undefined;
+  estimated_total_taxes: number | undefined;
+  estimated_net_income: number | undefined;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.state = 'West Virginia';
   }
 
   updateStandardDeduction() {
@@ -39,18 +45,29 @@ export class TaxCalculatorComponent implements OnInit {
         this.standard_deduction = 27700;
         break;
     }
-    this.updateTaxableIncome();
+    // this.updateTaxableIncome();
   }
 
   updateTaxableIncome() {
-    if ((this.gross_income && this.standard_deduction) && this.gross_income > this.standard_deduction) {
+      if (!this.gross_income) return;
+      if (!this.standard_deduction) return;
+      if (!this.self_employment_income) {
         this.taxable_income = this.gross_income - this.standard_deduction;
         this.state_taxable_income = this.gross_income - 2000;
-    }
+      } else {
+        this.taxable_income = +this.gross_income + +this.self_employment_income - this.standard_deduction;
+        this.state_taxable_income = +this.gross_income + +this.self_employment_income - 2000;
+      }
+  }
+
+  calculateSelfEmploymentIncome() {
+    this.doSelfEmployment = true;
   }
 
   calculateTaxes() {
-    if(!this.taxable_income) return;
+    this.updateStandardDeduction();
+    this.updateTaxableIncome();
+    if (!this.taxable_income) return;
     this.taxesCalculated = true;
     this.calculateStateTaxes();
     this.calculateFica();
@@ -78,8 +95,8 @@ export class TaxCalculatorComponent implements OnInit {
     this.calculateTotalTaxes();
   }
 
-  calculateStateTaxes(){
-    if(!this.state_taxable_income) return;
+  calculateStateTaxes() {
+    if (!this.state_taxable_income) return;
     if (this.state_taxable_income > 5000) {
       this.estimated_state_taxes = 118;
       if (this.state_taxable_income > 12500) {
@@ -107,24 +124,36 @@ export class TaxCalculatorComponent implements OnInit {
     }
   }
 
-  calculateFica(){
-    if(!this.gross_income) return;
-    // this.estimated_social_security_taxes = this.gross_income * .124; //self employed
+  calculateFica() {
+    if (!this.gross_income) return;
     this.estimated_social_security_taxes = this.gross_income * .062;
-    // this.estimated_medicare_taxes = this.gross_income * .029; //self employed
     this.estimated_medicare_taxes = this.gross_income * .0145;
-    this.estimated_employer_fica_contribution = this.estimated_social_security_taxes * .5;
-    this.estimated_employer_fica_contribution += this.estimated_medicare_taxes * .5;
+
+    if (this.self_employment_income) {
+      this.estimated_self_employed_social_security_taxes = this.self_employment_income * .124; //self employed
+      this.estimated_self_employed_medicare_taxes = this.self_employment_income * .029; //self employed
+
+      this.estimated_social_security_taxes += this.estimated_self_employed_social_security_taxes;
+      this.estimated_medicare_taxes += this.estimated_self_employed_medicare_taxes;
+
+    }
+
+    // this.estimated_employer_fica_contribution = this.estimated_social_security_taxes * .5;
+    // this.estimated_employer_fica_contribution += this.estimated_medicare_taxes * .5;
   }
 
-  calculateTotalTaxes(){
-    if(!this.gross_income) return;
-    this.estimated_total_taxes = (this.estimated_state_taxes ?? 0) + (this.estimated_social_security_taxes ?? 0) + (this.estimated_medicare_taxes ?? 0) + (this.estimated_taxes ?? 0) - (this.estimated_employer_fica_contribution ?? 0);
+  calculateTotalTaxes() {
+    if (!this.gross_income) return;
+    // this.estimated_total_taxes = (this.estimated_state_taxes ?? 0) + (this.estimated_social_security_taxes ?? 0) + (this.estimated_medicare_taxes ?? 0) + (this.estimated_taxes ?? 0) - (this.estimated_employer_fica_contribution ?? 0);
+    this.estimated_total_taxes = (this.estimated_state_taxes ?? 0) + (this.estimated_social_security_taxes ?? 0) + (this.estimated_medicare_taxes ?? 0) + (this.estimated_taxes ?? 0);
     this.estimated_net_income = this.gross_income - this.estimated_total_taxes;
   }
+
+
   resetData() {
     this.estimated_taxes = undefined;
     this.taxesCalculated = false;
+    this.doSelfEmployment = false;
   }
 
 }
