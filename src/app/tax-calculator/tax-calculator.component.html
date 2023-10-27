@@ -7,7 +7,18 @@
     </div>
     <div class="row py-1">
       <div class="col-12 text-center p-2">
-        <!-- <p>Enter your Gross Income & any expected Deductions you plan to take below.</p> -->
+        <div class="row my-1">
+          <div class="col-7">
+            <h3>Tax Year</h3>
+          </div>
+          <div class="col">
+              <select class="form-select w-75 m-auto text-center" [disabled]="taxesCalculated"
+              [(ngModel)]="tax_year">
+              <option>2023</option>
+              <option>2022</option>
+            </select>
+          </div>
+        </div>
         <div class="row my-1">
           <div class="col-7">
             <h3>Gross Income</h3>
@@ -21,19 +32,10 @@
             <h3>Self Employment Income</h3>
           </div>
           <div class="col">
-            <button *ngIf="!doSelfEmployment" [disabled]="taxesCalculated" class="btn btn-success" (click)="calculateSelfEmploymentIncome()">Add</button>
+            <button *ngIf="!doSelfEmployment" [disabled]="taxesCalculated" class="btn btn-success w-50"
+              (click)="calculateSelfEmploymentIncome()">Add</button>
             <input *ngIf="doSelfEmployment" type="tel" [disabled]="taxesCalculated" step="1000"
               class="text-center w-75 m-auto form-control" [(ngModel)]="self_employment_income" />
-          </div>
-        </div>
-        <div class="row my-1">
-          <div class="col-7">
-            <h3>State</h3>
-          </div>
-          <div class="col">
-            <select class="form-select w-75 m-auto text-center" [disabled]="true" [(ngModel)]="state">
-              <option>West Virginia</option>
-            </select>
           </div>
         </div>
         <div class="row mt-1 my-2">
@@ -41,12 +43,30 @@
             <h3>Filing Status</h3>
           </div>
           <div class="col">
-            <select class="form-select w-75 m-auto text-center" [disabled]="taxesCalculated" (change)="updateStandardDeduction()"
+            <select class="form-select w-75 m-auto text-center" [disabled]="taxesCalculated"
               [(ngModel)]="filing_status">
               <option>Single</option>
               <option>Married Filing Jointly</option>
               <option>Married Filing Separately</option>
             </select>
+          </div>
+        </div>
+        <div class="row my-1">
+          <div class="col-7">
+            <h3>State</h3>
+          </div>
+          <div class="col">
+            <select class="form-select w-75 m-auto text-center" [disabled]="true" [(ngModel)]="filing_state">
+              <option>WV</option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-1">
+          <div class="col-7">
+            <h3>401K (Traditional)</h3>
+          </div>
+          <div class="col"><input type="tel" [disabled]="taxesCalculated" step="1000"
+              class="text-center w-75 m-auto form-control" [(ngModel)]="traditional_retirement_contributions" />
           </div>
         </div>
 
@@ -86,7 +106,7 @@
         </div>
         <div class="row border-top mt-2" *ngIf="!taxesCalculated">
           <div class="col-10 m-auto py-3">
-            <button (click)="calculateTaxes()" class="btn w-100 btn-success p-2 fs-3">Calculate Taxes</button>
+            <button (click)="calculateTaxes()" [disabled]="!tax_year || !gross_income || !filing_status || !filing_state" class="btn w-100 btn-success p-2 fs-3">Calculate Taxes</button>
           </div>
         </div>
         <div class="row border-top mt-2" *ngIf="taxesCalculated">

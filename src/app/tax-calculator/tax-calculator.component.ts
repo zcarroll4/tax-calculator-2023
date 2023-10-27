@@ -8,8 +8,9 @@ import { resourceUsage } from 'process';
 })
 export class TaxCalculatorComponent implements OnInit {
 
-  state: string | undefined;
+  filing_state: string | undefined;
   filing_status: string | undefined;
+  tax_year: | number | undefined;
   standard_deduction: number | undefined;
   gross_income: number | undefined;
   self_employment_income: number | undefined;
@@ -17,6 +18,7 @@ export class TaxCalculatorComponent implements OnInit {
   state_taxable_income: number | undefined;
   estimated_taxes: number | undefined;
   estimated_state_taxes: number | undefined;
+  traditional_retirement_contributions: number | undefined;
   taxesCalculated: boolean = false;
   doSelfEmployment: boolean = false;
   estimated_social_security_taxes: number | undefined;
@@ -30,34 +32,49 @@ export class TaxCalculatorComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.state = 'West Virginia';
+    this.filing_state = 'WV';
+    this.tax_year = 2023;
   }
 
   updateStandardDeduction() {
-    switch (this.filing_status) {
-      case 'Single':
-        this.standard_deduction = 13850;
-        break;
-      case 'Married Filing Separately':
-        this.standard_deduction = 13850;
-        break;
-      case 'Married Filing Jointly':
-        this.standard_deduction = 27700;
-        break;
+    if (this.tax_year == 2023) {
+      switch (this.filing_status) {
+        case 'Single':
+          this.standard_deduction = 13850;
+          break;
+        case 'Married Filing Separately':
+          this.standard_deduction = 13850;
+          break;
+        case 'Married Filing Jointly':
+          this.standard_deduction = 27700;
+          break;
+      }
     }
-    // this.updateTaxableIncome();
+    if (this.tax_year == 2022) {
+      switch (this.filing_status) {
+        case 'Single':
+          this.standard_deduction = 12950;
+          break;
+        case 'Married Filing Separately':
+          this.standard_deduction = 12950;
+          break;
+        case 'Married Filing Jointly':
+          this.standard_deduction = 25900;
+          break;
+      }
+    }
   }
 
   updateTaxableIncome() {
-      if (!this.gross_income) return;
-      if (!this.standard_deduction) return;
-      if (!this.self_employment_income) {
-        this.taxable_income = this.gross_income - this.standard_deduction;
-        this.state_taxable_income = this.gross_income - 2000;
-      } else {
-        this.taxable_income = +this.gross_income + +this.self_employment_income - this.standard_deduction;
-        this.state_taxable_income = +this.gross_income + +this.self_employment_income - 2000;
-      }
+    if (!this.gross_income) return;
+    if (!this.standard_deduction) return;
+    if (!this.self_employment_income) {
+      this.taxable_income = this.gross_income - this.standard_deduction;
+      this.state_taxable_income = this.gross_income - 2000;
+    } else {
+      this.taxable_income = +this.gross_income + +this.self_employment_income - this.standard_deduction - (this.traditional_retirement_contributions ?? 0);
+      this.state_taxable_income = +this.gross_income + +this.self_employment_income - 2000 - (this.traditional_retirement_contributions ?? 0);
+    }
   }
 
   calculateSelfEmploymentIncome() {
@@ -65,34 +82,145 @@ export class TaxCalculatorComponent implements OnInit {
   }
 
   calculateTaxes() {
+    //debug
     this.updateStandardDeduction();
     this.updateTaxableIncome();
+    console.log(this.gross_income);
+    console.log(this.standard_deduction);
+    console.log(this.taxable_income);
+    console.log(this.gross_income);
+    console.log(this.state_taxable_income);
+    console.log(this.filing_status);
+    console.log(this.tax_year);
+    console.log(this.self_employment_income);
+    
     if (!this.taxable_income) return;
+    if (this.doSelfEmployment && !this.self_employment_income) this.doSelfEmployment = false;
     this.taxesCalculated = true;
     this.calculateStateTaxes();
     this.calculateFica();
-    if (this.taxable_income > 11000) {
-      this.estimated_taxes = 1100;
-      if (this.taxable_income > 44725) {
-        this.estimated_taxes += 4047;
-      } else {
-        this.estimated_taxes += Math.round((this.taxable_income - 11000) * .12);
-        this.calculateTotalTaxes();
-        return;
+    if (this.tax_year == 2023) {
+      if (this.filing_status == 'Single' || this.filing_status == 'Married Filing Separately') {
+        if (this.taxable_income > 11000) {
+          this.estimated_taxes = 1100;
+          if (this.taxable_income > 44725) {
+            this.estimated_taxes += 4047;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 11000) * .12);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 95375) {
+            this.estimated_taxes += 11143;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 44725) * .22);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 182100) {
+            this.estimated_taxes += 20814;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 95375) * .24);
+            this.calculateTotalTaxes();
+            return;
+          }
+        } else {
+          this.estimated_taxes = Math.round(this.taxable_income * .10);
+          this.calculateTotalTaxes();
+          return;
+        }
+      } else if (this.filing_status == 'Married Filing Jointly') {
+        if (this.taxable_income > 22000) {
+          this.estimated_taxes = 2200;
+          if (this.taxable_income > 89450) {
+            this.estimated_taxes += 8094;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 22000) * .12);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 190750) {
+            this.estimated_taxes += 22286;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 89450) * .22);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 364200) {
+            this.estimated_taxes += 41628;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 190750) * .24);
+            this.calculateTotalTaxes();
+            return;
+          }
+        } else {
+          this.estimated_taxes = Math.round(this.taxable_income * .10);
+          this.calculateTotalTaxes();
+          return;
+        }
       }
-      if (this.taxable_income > 95375) {
-        this.estimated_taxes += 11143;
-      } else {
-        this.estimated_taxes += Math.round((this.taxable_income - 44725) * .22);
-        this.calculateTotalTaxes();
-        return;
-      }
-    } else {
-      this.estimated_taxes = Math.round(this.taxable_income * .10);
-      this.calculateTotalTaxes();
-      return;
     }
-    this.calculateTotalTaxes();
+    if (this.tax_year == 2022) {
+      if (this.filing_status == 'Single' || this.filing_status == 'Married Filing Separately') {
+        if (this.taxable_income > 10275) {
+          this.estimated_taxes = 1027.5;
+          if (this.taxable_income > 41775) {
+            this.estimated_taxes += 3780;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 10275) * .12);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 89075) {
+            this.estimated_taxes += 10406;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 41775) * .22);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 170050) {
+            this.estimated_taxes += 19434;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 89075) * .24);
+            this.calculateTotalTaxes();
+            return;
+          }
+        } else {
+          this.estimated_taxes = Math.round(this.taxable_income * .10);
+          this.calculateTotalTaxes();
+          return;
+        }
+      } else if (this.filing_status == 'Married Filing Jointly') {
+        if (this.taxable_income > 20550) {
+          this.estimated_taxes = 2055;
+          if (this.taxable_income > 83550) {
+            this.estimated_taxes += 7560;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 20550) * .12);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 178150) {
+            this.estimated_taxes += 20812;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 83550) * .22);
+            this.calculateTotalTaxes();
+            return;
+          }
+          if (this.taxable_income > 340100) {
+            this.estimated_taxes += 38868;
+          } else {
+            this.estimated_taxes += Math.round((this.taxable_income - 178150) * .24);
+            this.calculateTotalTaxes();
+            return;
+          }
+        } else {
+          this.estimated_taxes = Math.round(this.taxable_income * .10);
+          this.calculateTotalTaxes();
+          return;
+        }
+      }
+    }
   }
 
   calculateStateTaxes() {
