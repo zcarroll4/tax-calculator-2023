@@ -19,8 +19,11 @@ export class TaxCalculatorComponent implements OnInit {
   estimated_taxes: number | undefined;
   estimated_state_taxes: number | undefined;
   traditional_retirement_contributions: number | undefined;
+  hsa_contributions: number | undefined;
   taxesCalculated: boolean = false;
-  doSelfEmployment: boolean = false;
+  hasSelfEmploymentIncome: boolean = false;
+  hasRetirementContributions: boolean = false;
+  hasHSAContributions: boolean = false;
   estimated_social_security_taxes: number | undefined;
   estimated_medicare_taxes: number | undefined;
   estimated_self_employed_social_security_taxes: number | undefined;
@@ -69,16 +72,24 @@ export class TaxCalculatorComponent implements OnInit {
     if (!this.gross_income) return;
     if (!this.standard_deduction) return;
     if (!this.self_employment_income) {
-      this.taxable_income = this.gross_income - this.standard_deduction;
-      this.state_taxable_income = this.gross_income - 2000;
+      this.taxable_income = this.gross_income - this.standard_deduction -(this.traditional_retirement_contributions ?? 0) - (this.hsa_contributions ?? 0);
+      this.state_taxable_income = this.gross_income - 2000 -(this.traditional_retirement_contributions ?? 0) - (this.hsa_contributions ?? 0);
     } else {
-      this.taxable_income = +this.gross_income + +this.self_employment_income - this.standard_deduction - (this.traditional_retirement_contributions ?? 0);
-      this.state_taxable_income = +this.gross_income + +this.self_employment_income - 2000 - (this.traditional_retirement_contributions ?? 0);
+      this.taxable_income = +this.gross_income + +this.self_employment_income - this.standard_deduction -(this.traditional_retirement_contributions ?? 0) - (this.hsa_contributions ?? 0);
+      this.state_taxable_income = +this.gross_income + +this.self_employment_income - 2000 -(this.traditional_retirement_contributions ?? 0) - (this.hsa_contributions ?? 0);
     }
   }
 
   calculateSelfEmploymentIncome() {
-    this.doSelfEmployment = true;
+    this.hasSelfEmploymentIncome = true;
+  }
+
+  toggleRetirementContributions(){
+    this.hasRetirementContributions = true;
+  }
+
+  toggleHSAContributions(){
+    this.hasHSAContributions = true;
   }
 
   calculateTaxes() {
@@ -95,7 +106,7 @@ export class TaxCalculatorComponent implements OnInit {
     console.log(this.self_employment_income);
     
     if (!this.taxable_income) return;
-    if (this.doSelfEmployment && !this.self_employment_income) this.doSelfEmployment = false;
+    if (this.hasSelfEmploymentIncome && !this.self_employment_income) this.hasSelfEmploymentIncome = false;
     this.taxesCalculated = true;
     this.calculateStateTaxes();
     this.calculateFica();
@@ -281,7 +292,10 @@ export class TaxCalculatorComponent implements OnInit {
   resetData() {
     this.estimated_taxes = undefined;
     this.taxesCalculated = false;
-    this.doSelfEmployment = false;
+    if(!this.self_employment_income) this.hasSelfEmploymentIncome = false;
+    if(!this.traditional_retirement_contributions) this.hasRetirementContributions = false;
+    if(!this.hsa_contributions) this.hasHSAContributions = false;
+    
   }
 
 }
