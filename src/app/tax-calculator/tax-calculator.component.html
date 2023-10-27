@@ -55,7 +55,7 @@
           </div>
           <div class="col">
             <button *ngIf="!hasSelfEmploymentIncome" [disabled]="taxesCalculated" class="btn btn-success w-50"
-              (click)="calculateSelfEmploymentIncome()">Add</button>
+              (click)="toggleSelfEmploymentIncome()">Add</button>
             <input *ngIf="hasSelfEmploymentIncome" type="tel" [disabled]="taxesCalculated" step="1000"
               class="text-center w-75 m-auto form-control" [(ngModel)]="self_employment_income" />
           </div>
@@ -66,7 +66,7 @@
           </div>
           <div class="col">
             <button *ngIf="!hasRetirementContributions" [disabled]="taxesCalculated" class="btn btn-success w-50"
-              (click)="calculateSelfEmploymentIncome()">Add</button>
+              (click)="toggleRetirementContributions()">Add</button>
             <input *ngIf="hasRetirementContributions" type="tel" [disabled]="taxesCalculated" step="1000"
               class="text-center w-75 m-auto form-control" [(ngModel)]="traditional_retirement_contributions" />
           </div>
@@ -77,7 +77,7 @@
           </div>
           <div class="col">
             <button *ngIf="!hasHSAContributions" [disabled]="taxesCalculated" class="btn btn-success w-50"
-              (click)="calculateSelfEmploymentIncome()">Add</button>
+              (click)="toggleHSAContributions()">Add</button>
             <input *ngIf="hasHSAContributions" type="tel" [disabled]="taxesCalculated" step="1000"
               class="text-center w-75 m-auto form-control" [(ngModel)]="hsa_contributions" />
           </div>

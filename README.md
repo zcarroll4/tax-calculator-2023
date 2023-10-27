@@ -12,6 +12,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 Override default build directory:
 `ng build --output-path docs --base-href docs`
+`ng build --output-path docs --base-href /tax-calculator-2023/`
 This will change the artifacts to be saved to `docs/`.
 
 
